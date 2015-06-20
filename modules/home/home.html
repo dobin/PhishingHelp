@@ -1,0 +1,37 @@
+
+<div class="row">
+
+    <form ng-submit="getDomains()">
+
+    <div class="col-md-4">
+            <input type="text" class="form-control" id="b"
+                   name="inputDomain" ng-model="inputDomain"  placeholder="e.g. google.ch">
+    </div>
+    <div class="col-md-4">
+        <input class="btn btn-default" type="submit" id="submit" value="Submit" />
+    </div>
+
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        &nbsp;
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div ng-show="loading" class="loading">Loading</div>
+
+        <table class="table table-condensed" data-show-header="false">
+        <tr ng-repeat="domain in domains">
+            <td>{{domain.domain}}</td>
+            <td>{{domain.ipaddr}}</td>
+            <td>{{domain.asn}} {{domain.asnowner}}</td>
+            <td>{{domain.type}}</td>
+            <td> {{domain.badactor}}</td>
+        </tr>
+    </table>
+    </div>
+</div>
