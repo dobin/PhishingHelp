@@ -3,7 +3,7 @@
 angular.module('myApp.Domain', ['ngRoute'])
 
 .factory("DomainService", ['$http', function($http) {
-    var serviceBase = '/services/myphish/api/v1.0/';
+    var serviceBase = '/service/myphish/api/v1.0/';
     var obj = {};
 
     obj.getPhishDomainsFor = function(domain) {

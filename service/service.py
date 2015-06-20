@@ -7,8 +7,11 @@ import json
 import mmap
 from cymruwhois import Client
 
+from pprint import pprint
+
 app = Flask(__name__)
 
+c=Client()
 
 
 # from: https://gist.github.com/farazdagi/1089923
@@ -35,14 +38,25 @@ def get_domains(dom):
 
 
 def getAsForDomains(domains):
-    c=Client()
+    ips = []
 
+    # get all ips
     for dom in domains:
         if 'ipaddr' in domains[dom] and domains[dom]['ipaddr'] != None:
             theip = domains[dom]['ipaddr']
-            r = c.lookup(theip)
-            domains[dom]['asn'] = r.asn
-            domains[dom]['asnowner'] = r.owner
+            ips.append(theip)
+
+    # lookup all ips
+    resp = c.lookupmany(ips)
+
+    # omfg is this ugly
+    for r in resp:
+        for d in domains:
+            if domains[d]['ipaddr'] == r.ip:
+                domains[d]['cc'] = r.cc
+                domains[d]['asn'] = r.asn
+                domains[d]['asnowner'] = r.owner
+
 
 def getBadactorsForDomains(domains):
     f = open('badactors/badactors.txt')

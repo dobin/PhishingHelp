@@ -139,7 +139,6 @@ def calcDomains(domain):
     	domains[i] = {'type':'Insertion', 'domain':i, 'ipaddr':'-'}
 
     for dom in domains:
-        print "Trying: " + domains[dom]['domain']
         try:
             domains[dom]['ipaddr'] = socket.gethostbyname(domains[dom]['domain'])
         except:
