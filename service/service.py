@@ -5,13 +5,17 @@ from flask import Flask, jsonify, redirect, request, current_app
 import dnstwist
 import json
 import mmap
+
 from cymruwhois import Client
+import pythonwhois
+import socket
+
 
 from pprint import pprint
 
 app = Flask(__name__)
 
-c=Client()
+
 
 
 # from: https://gist.github.com/farazdagi/1089923
@@ -32,9 +36,39 @@ def support_jsonp(f):
 @support_jsonp
 def get_domains(dom):
     domains = dnstwist.calcDomains(dom)
+
+    getIpForDomains(domains)
     getAsForDomains(domains)
     getBadactorsForDomains(domains)
-    return jsonify({'domains': domains})
+
+    #getWhoisForDomains(domains)
+
+    # convert ips to array
+    for dom in domains:
+        domains[dom]['ipaddr'] = domains[dom]['ipaddr'].values()
+
+    # convert domains to array and return
+    return jsonify({'domains': domains.values()})
+
+
+def getIpForDomains(domains):
+    for dom in domains:
+        domains[dom]['ipaddr'] = {}
+
+        try:
+            ips = socket.gethostbyname_ex(domains[dom]['domain'])
+
+            for ip in ips[2]:
+                domains[dom]['ipaddr'][ip] = {}
+        except:
+            domains[dom]['ipaddr'] = {}
+
+
+def getWhoisForDomains(domains):
+    for dom in domains:
+        for ip in domains[dom]['ipaddr']:
+            whois = pythonwhois.get_whois(domains[dom]['domain'])
+            domains[dom]['whois'] = whois.registrant
 
 
 def getAsForDomains(domains):
@@ -42,20 +76,25 @@ def getAsForDomains(domains):
 
     # get all ips
     for dom in domains:
-        if 'ipaddr' in domains[dom] and domains[dom]['ipaddr'] != None:
-            theip = domains[dom]['ipaddr']
+        for ip in domains[dom]['ipaddr']:
+            theip = ip
             ips.append(theip)
 
     # lookup all ips
+    c=Client()
     resp = c.lookupmany(ips)
 
-    # omfg is this ugly
+    # find original ip again
     for r in resp:
         for d in domains:
-            if domains[d]['ipaddr'] == r.ip:
-                domains[d]['cc'] = r.cc
-                domains[d]['asn'] = r.asn
-                domains[d]['asnowner'] = r.owner
+            for ip in domains[d]['ipaddr']:
+                if ip == r.ip:
+                    domains[d]['ipaddr'][ip]
+
+                    domains[d]['ipaddr'][ip]['ipaddr'] = r.ip
+                    domains[d]['ipaddr'][ip]['cc'] = r.cc
+                    domains[d]['ipaddr'][ip]['asn'] = r.asn
+                    domains[d]['ipaddr'][ip]['asnowner'] = r.owner
 
 
 def getBadactorsForDomains(domains):
@@ -63,9 +102,13 @@ def getBadactorsForDomains(domains):
     s = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
 
     for dom in domains:
-        if 'ipaddr' in domains[dom] and domains[dom]['ipaddr'] != None:
-            if s.find( domains[dom]['ipaddr'] ) != -1:
-                domains[dom]['badactor'] = 'badactor'
+        for ip in domains[dom]['ipaddr']:
+            print ip
+
+            if s.find( ip ) != -1:
+                domains[dom]['ipaddr'][ip]['badactor'] = 'Yes'
+            else:
+                domains[dom]['ipaddr'][ip]['badactor'] = 'No'
 
 
 if __name__ == '__main__':

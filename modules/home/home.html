@@ -24,14 +24,21 @@
     <div class="col-md-12">
         <div ng-show="loading" class="loading">Loading</div>
 
-        <table class="table table-condensed" data-show-header="false">
-        <tr ng-repeat="domain in domains">
-            <td>{{domain.domain}}</td>
-            <td>{{domain.ipaddr}}</td>
-            <td>{{domain.asn}} {{domain.asnowner}}</td>
-            <td>{{domain.type}}</td>
-            <td> {{domain.badactor}}</td>
-        </tr>
-    </table>
+        <table class="table table-condensed maintable" data-show-header="false">
+            <tr ng-repeat-start='domain in domains'>
+                <th rowspan="{{domain.ipaddr.length}}">{{domain.domain}}</th>
+                <th rowspan="{{domain.ipaddr.length}}"> WHOIS </td>
+                <td>{{domain.ipaddr[0].ipaddr}}</td>
+                <td>{{domain.ipaddr[0].asn}} {{domain.ipaddr[0].asnowner}}</td>
+                <td>{{domain.ipaddr[0].badactor}}</td>
+            </tr>
+            <tr ng-repeat-end ng-repeat='ip in domain.ipaddr' ng-hide="$first">
+
+                <td>{{ip.ipaddr}}</td>
+                <td>{{ip.asn}} {{ip.asnowner}}</td>
+                <td>{{ip.badactor}}</td>
+            </tr>
+
+        </table>
     </div>
 </div>

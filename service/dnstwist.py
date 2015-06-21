@@ -10,7 +10,6 @@ __email__ = 'marcin@ulikowski.pl'
 
 
 import sys
-import socket
 import signal
 
 
@@ -123,26 +122,33 @@ def main():
 
 def calcDomains(domain):
     domains = {}
-    domains[domain] = {'type':'Original', 'domain':domain, 'ipaddr':'-'}
+    id = 1
 
     for i in bitsquatting(domain):
-	    domains[i] = {'type':'Bitsquatting', 'domain':i, 'ipaddr':'-'}
-    for i in homoglyph(domain):
-	    domains[i] = {'type':'Homoglyph', 'domain':i, 'ipaddr':'-'}
-    for i in repetition(domain):
-    	domains[i] = {'type':'Repetition', 'domain':i, 'ipaddr':'-'}
-    for i in replacement(domain):
-    	domains[i] = {'type':'Replacement', 'domain':i, 'ipaddr':'-'}
-    for i in omission(domain):
-    	domains[i] = {'type':'Omission', 'domain':i, 'ipaddr':'-'}
-    for i in insertion(domain):
-    	domains[i] = {'type':'Insertion', 'domain':i, 'ipaddr':'-'}
+	    domains[i] = {'type':'Bitsquatting', 'domain':i, 'ipaddr':'-', 'idx': id}
+	    id += 1
 
-    for dom in domains:
-        try:
-            domains[dom]['ipaddr'] = socket.gethostbyname(domains[dom]['domain'])
-        except:
-            domains[dom]['ipaddr'] = None
+    for i in homoglyph(domain):
+	    domains[i] = {'type':'Homoglyph', 'domain':i, 'ipaddr':'-', 'idx': id}
+	    id += 1
+
+    for i in repetition(domain):
+    	domains[i] = {'type':'Repetition', 'domain':i, 'ipaddr':'-', 'idx': id}
+    	id += 1
+
+    for i in replacement(domain):
+    	domains[i] = {'type':'Replacement', 'domain':i, 'ipaddr':'-', 'idx': id}
+    	id += 1
+
+    for i in omission(domain):
+    	domains[i] = {'type':'Omission', 'domain':i, 'ipaddr':'-', 'idx': id}
+    	id += 1
+
+    for i in insertion(domain):
+    	domains[i] = {'type':'Insertion', 'domain':i, 'ipaddr':'-', 'idx': id}
+    	id += 1
+
+    domains[domain] = {'type':'Original', 'domain':domain, 'ipaddr':'-', 'idx': 0}
 
     return domains
 
