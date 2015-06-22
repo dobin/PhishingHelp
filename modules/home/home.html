@@ -25,15 +25,30 @@
         <div ng-show="loading" class="loading">Loading</div>
 
         <table class="table table-condensed maintable" data-show-header="false">
-            <tr ng-repeat-start='domain in domains'>
-                <th rowspan="{{domain.ipaddr.length}}">{{domain.domain}}</th>
-                <th rowspan="{{domain.ipaddr.length}}"> WHOIS </td>
+            <th>
+                <td>Whois</td>
+                <td>IP</td>
+                <td>IP AS</td>
+                <td>IP Badactor</td>
+            </th>
+
+            <tr ng-repeat-start="domain in domains | orderBy: 'idx'">
+                <td rowspan="{{domain.ipaddr.length}}">{{domain.domain}}</td>
+                <td rowspan="{{domain.ipaddr.length}}">
+
+                    <div ng-show="domain.whois">
+                        {{domain.whois}}
+                    </div>
+                    <div ng-show="domain.whois == undefined">
+                        <button ng-click="whois(domain)">whois</button>
+                    </div>
+
+                </td>
                 <td>{{domain.ipaddr[0].ipaddr}}</td>
                 <td>{{domain.ipaddr[0].asn}} {{domain.ipaddr[0].asnowner}}</td>
                 <td>{{domain.ipaddr[0].badactor}}</td>
             </tr>
             <tr ng-repeat-end ng-repeat='ip in domain.ipaddr' ng-hide="$first">
-
                 <td>{{ip.ipaddr}}</td>
                 <td>{{ip.asn}} {{ip.asnowner}}</td>
                 <td>{{ip.badactor}}</td>
