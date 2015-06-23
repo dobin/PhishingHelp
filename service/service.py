@@ -1,24 +1,21 @@
 #!flask/bin/python
+from flask import Flask, jsonify, redirect, request, current_app, abort
 from functools import wraps
-
-from flask import Flask, jsonify, redirect, request, current_app
-import dnstwist
+from pprint import pprint
+import socket
+import unirest
 import json
 import mmap
 
 from cymruwhois import Client
 import pythonwhois
-import socket
-import unirest
 import whois
-
-from pprint import pprint
+import dnstwist
 
 app = Flask(__name__)
 
-
-
 # from: https://gist.github.com/farazdagi/1089923
+# used to annonate another function to return JSONP
 def support_jsonp(f):
     """Wraps JSONified output for JSONP"""
     @wraps(f)
@@ -35,10 +32,17 @@ def support_jsonp(f):
 @app.route('/myphish/api/v1.0/domain/<dom>', methods=['GET'])
 @support_jsonp
 def get_domains(dom):
+    # get all mutations of initial domain
+    # id 0 is original
     domains = dnstwist.calcDomains(dom)
 
+    # get ips for each domain
     getIpForDomains(domains)
+
+    # get as for each ip
     getAsForDomains(domains)
+
+    # get badactorflag for each ip
     getBadactorsForDomains(domains)
 
     #getWhoisForDomains(domains)
@@ -54,22 +58,19 @@ def get_domains(dom):
 @app.route('/myphish/api/v1.0/whois/<dom>', methods=['GET'])
 def get_whois(dom):
     ret = "";
-    print "A: " + dom
 
     whois = pythonwhois.get_whois(dom)
 
-    if 'contacts' in whois and 'registrant' in whois['contacts'] and 'name' in whois['contacts']['registrant']:
-        ret = { 'name': whois['contacts']['registrant']['name'],
-         'error': 'false'}
+    if 'contacts' in whois and 'registrant' in whois['contacts'] and not whois['contacts']['registrant'] == None and 'name' in whois['contacts']['registrant']:
+        ret = { 'name': whois['contacts']['registrant']['name'], 'error': 'false'}
+        return jsonify(ret)
     else:
-        ret = { 'error': 'true' }
+        #ret = { 'error': 'true' }
+       abort(404);
 
 
-    #whoisData = json.loads(whois.content)
-    return jsonify(ret)
-
-
-def get_whois2(dom):
+# not used
+def get_whoisJsonWhois(dom):
     ret = "";
     response = unirest.get("https://jsonwhois.com/api/v1/whois",
 
