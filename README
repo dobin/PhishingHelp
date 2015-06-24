@@ -3,11 +3,14 @@
 Libraries:
 
 sudo pip install Flask
+sudo pip install pymongo
+
 sudo pip install unirest
 sudo pip install pyasn --pre
 sudo pip install python-whois
 sudo pip install pythonwhois
 sudo pip install pwhois
+
 
 
 Flask Server:

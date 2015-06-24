@@ -2,17 +2,27 @@
 from flask import Flask, jsonify, redirect, request, current_app, abort
 from functools import wraps
 from pprint import pprint
-import socket
 import unirest
 import json
-import mmap
 
-from cymruwhois import Client
-import pythonwhois
-import whois
+from pymongo import MongoClient
+
 import dnstwist
+from domaintools import resolveDomain
+
+
+mongoClient = MongoClient('localhost')
+mongoDB = mongoClient.phishing_help
 
 app = Flask(__name__)
+
+# from: http://stackoverflow.com/questions/16586180/typeerror-objectid-is-not-json-serializable
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
+
 
 # from: https://gist.github.com/farazdagi/1089923
 # used to annonate another function to return JSONP
@@ -36,20 +46,24 @@ def get_domains(dom):
     # id 0 is original
     domains = dnstwist.calcDomains(dom)
 
-    # get ips for each domain
-    getIpForDomains(domains)
+    mongoDomains = mongoDB.domains
 
-    # get as for each ip
-    getAsForDomains(domains)
+    # check if already exists in db
+    for domain in domains:
+        mongoDomain = mongoDomains.find_one({"domain": domain})
 
-    # get badactorflag for each ip
-    getBadactorsForDomains(domains)
-
-    #getWhoisForDomains(domains)
+        if not mongoDomain is None:
+            domains[domain] = mongoDomain
+            domains[domain]['_id'] = str(domains[domain]['_id'])
+        else:
+            # resolve by our self
+            resolveDomain(domains[domain])
+            mongoDomains.insert(domains[domain])
+            domains[domain]['_id'] = str(domains[domain]['_id'])
 
     # convert ips to array
-    for dom in domains:
-        domains[dom]['ipaddr'] = domains[dom]['ipaddr'].values()
+    #for dom in domains:
+    #    domains[dom]['ipaddr'] = domains[dom]['ipaddr'].values()
 
     # convert domains to array and return
     return jsonify({'domains': domains.values()})
@@ -69,87 +83,7 @@ def get_whois(dom):
        abort(404);
 
 
-# not used
-def get_whoisJsonWhois(dom):
-    ret = "";
-    response = unirest.get("https://jsonwhois.com/api/v1/whois",
-
-    headers={
-        "Accept": "application/json",
-        "Authorization": "Token token=0f543295f4fb14ae05032d54d55beb57"
-    },
-
-    params={
-        "domain": dom
-    })
-
-    #response.body # The parsed response
-    print response.body
-    #json_obj = json.loads(response.body)
-
-    #print(json_obj['registrant_contacts'])
-    return jsonify(response.body);
-
-
-def getIpForDomains(domains):
-    for dom in domains:
-        domains[dom]['ipaddr'] = {}
-
-        try:
-            ips = socket.gethostbyname_ex(domains[dom]['domain'])
-
-            for ip in ips[2]:
-                domains[dom]['ipaddr'][ip] = {}
-        except:
-            domains[dom]['ipaddr'] = {}
-
-def getWhoisForDomains(domains):
-    for dom in domains:
-        if domains[dom]['idx'] == 0:
-            for ip in domains[dom]['ipaddr']:
-                whois = pythonwhois.get_whois(domains[dom]['domain'])
-                domains[dom]['whois'] = whois.registrant
-
-
-def getAsForDomains(domains):
-    ips = []
-
-    # get all ips
-    for dom in domains:
-        for ip in domains[dom]['ipaddr']:
-            theip = ip
-            ips.append(theip)
-
-    # lookup all ips
-    c=Client()
-    resp = c.lookupmany(ips)
-
-    # find original ip again
-    for r in resp:
-        for d in domains:
-            for ip in domains[d]['ipaddr']:
-                if ip == r.ip:
-                    domains[d]['ipaddr'][ip]
-
-                    domains[d]['ipaddr'][ip]['ipaddr'] = r.ip
-                    domains[d]['ipaddr'][ip]['cc'] = r.cc
-                    domains[d]['ipaddr'][ip]['asn'] = r.asn
-                    domains[d]['ipaddr'][ip]['asnowner'] = r.owner
-
-
-def getBadactorsForDomains(domains):
-    f = open('badactors/badactors.txt')
-    s = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
-
-    for dom in domains:
-        for ip in domains[dom]['ipaddr']:
-            print ip
-
-            if s.find( ip ) != -1:
-                domains[dom]['ipaddr'][ip]['badactor'] = 'Yes'
-            else:
-                domains[dom]['ipaddr'][ip]['badactor'] = 'No'
-
-
 if __name__ == '__main__':
     app.run(debug=True)
+
+
