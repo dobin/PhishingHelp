@@ -2,7 +2,7 @@ import mmap
 import socket
 
 from cymruwhois import Client
-import pythonwhois
+
 import whois
 
 from pprint import pprint
@@ -40,13 +40,6 @@ def getIpForDomains(domain):
 
 
 
-#def getWhoisForIp(ip):
-#        if ip['idx'] == 0:
-#            for ip in domains[dom]['ipaddr']:
-#                whois = pythonwhois.get_whois(domains[dom]['domain'])
-#                domains[dom]['whois'] = whois.registrant
-
-
 def getAsForDomains(domain):
     ips = []
 
@@ -64,15 +57,11 @@ def getAsForDomains(domain):
     for r in resp:
         for ip in domain['ipaddr']:
             if ip['ipaddr'] == r.ip:
-                #domain['ipaddr'][ip]
-                #domain['ipaddr'][ip]['ipaddr'] = r.ip
-                #domain['ipaddr'][ip]['cc'] = r.cc
-                #domain['ipaddr'][ip]['asn'] = r.asn
-                #domain['ipaddr'][ip]['asnowner'] = r.owner
                 ip['ipaddr'] = r.ip
                 ip['cc'] = r.cc
                 ip['asn'] = r.asn
                 ip['asnowner'] = r.owner
+
 
 
 def getBadactorsForDomains(domain):
@@ -81,34 +70,9 @@ def getBadactorsForDomains(domain):
 
     for ip in domain['ipaddr']:
         if s.find( ip['ipaddr'] ) != -1:
-            #domain['ipaddr'][ip]['badactor'] = 'Yes'
             ip['badactor'] = "Yes"
         else:
-            #pprint( domain['ipaddr'][ip] )
             ip['badactor'] = "No"
-            #domain['ipaddr'][ip]['badactor'] = 'No'
 
 
 
-
-
-# not used
-def get_whoisJsonWhois(dom):
-    ret = "";
-    response = unirest.get("https://jsonwhois.com/api/v1/whois",
-
-    headers={
-        "Accept": "application/json",
-        "Authorization": "Token token=0f543295f4fb14ae05032d54d55beb57"
-    },
-
-    params={
-        "domain": dom
-    })
-
-    #response.body # The parsed response
-    print response.body
-    #json_obj = json.loads(response.body)
-
-    #print(json_obj['registrant_contacts'])
-    return jsonify(response.body);
