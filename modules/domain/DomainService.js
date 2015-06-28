@@ -10,6 +10,10 @@ angular.module('myApp.Domain', ['ngRoute'])
             return $http.jsonp("" + serviceBase + "domain/" + domain + "?jsonp=JSON_CALLBACK");
         }
 
+        obj.getPhishingDomainInfo = function(domain) {
+            return $http.jsonp("" + serviceBase + "domainInfo/" + domain + "?jsonp=JSON_CALLBACK");
+        }
+
         obj.getWhoisFor = function(domain) {
             return $http.get("" + serviceBase + "whois/" + domain);
         }

@@ -9,6 +9,10 @@ from bson.json_util import dumps
 from bson import Binary, Code
 
 from datetime import datetime
+from bson import ObjectId
+import simplejson
+from flask import Response
+from datetime import datetime
 
 from pymongo import MongoClient
 
@@ -22,16 +26,39 @@ mongoDB = mongoClient.phishing_help
 
 app = Flask(__name__)
 
+class MongoDocumentEncoder(simplejson.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+        elif isinstance(o, ObjectId):
+            return str(o)
+        return simplejson.JSONEncoder(self, o)
+
+
+def mongodoc_jsonify(*args, **kwargs):
+    return Response(simplejson.dumps(dict(*args, **kwargs), cls=MongoDocumentEncoder), mimetype='application/json')
+
+@app.route('/myphish/api/v1.0/domainInfo/<dom>', methods=['GET'])
+@support_jsonp
+def get_domain(dom):
+    mongoDomains = mongoDB.domains
+
+    domain = mongoDomains.find_one({ 'domain': dom });
+    return mongodoc_jsonify(domain)
+
 
 @app.route('/myphish/api/v1.0/domain/<dom>', methods=['GET'])
 @support_jsonp
 def get_domains(dom):
+    print "Start"
+    ui = 0
+
     # get all mutations of initial domain
     # id 0 is original
     domains = dnstwist.calcDomains(dom)
 
     mongoDomains = mongoDB.domains
-    unresolvedDomains = []
+    unresolvedDomains = {}
 
     # check if already exists in db
     for domain in domains:
@@ -40,27 +67,22 @@ def get_domains(dom):
         if not mongoDomain is None:
             # get from db
             domains[domain] = mongoDomain
-            domains[domain]['_id'] = str(domains[domain]['_id'])
         else:
             # resolve by our self and insert into db
             domains[domain]['resolveDate'] = datetime.now()
             resolveDomain(domains[domain])
+            domains[domain]['isFullyResolved'] = False;
             mongoDomains.insert(domains[domain])
 
             # mark for further processing
-            unresolvedDomains.append(domains[domain])
+            unresolvedDomains[domain] = domains[domain]
 
 
     # start long lived resolver
-    resolveDomainsLong(domains, mongoDomains)
-
-
-    # convert id so jsonify works
-    for domain in domains:
-        domains[domain]['_id'] = str(domains[domain]['_id'])
+    resolveDomainsLong(unresolvedDomains, mongoDomains)
 
     # convert domains to array and return to client
-    return jsonify({'domains': domains.values()})
+    return mongodoc_jsonify({'domains': domains.values()})
     #return JSONEncoder().encode({'domains': domains.values()})
     #return dumps({'domains': domains.values()})
 

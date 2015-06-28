@@ -26,7 +26,7 @@ def resolveDomainsLong(domains, mongoDomains):
         if 'contacts' in whois and 'registrant' in whois['contacts'] and not whois['contacts']['registrant'] == None and 'name' in whois['contacts']['registrant']:
             dom['whois'] = { 'name': whois['contacts']['registrant']['name'], 'error': 'false', 'registered': 'true'}
             print "Domain: " + dom['domain'] + "  is registered"
-
+            dom['isFullyResolved'] = True;
             mongoDomains.save(dom)
             #mongoDomains.update({'_id': dom['_id'], {"$set": dom)
 
@@ -39,6 +39,7 @@ def resolveDomainsLong(domains, mongoDomains):
                 dom['whois'] = { 'name': "", 'error': 'false', 'registered': 'false' }
                 d += 1
                 print "Domain: " + dom['domain'] + " is NOT registered"
+                dom['isFullyResolved'] = True;
                 mongoDomains.save(dom)
 
 

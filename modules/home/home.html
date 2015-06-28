@@ -35,15 +35,9 @@
             <tr ng-repeat-start="domain in domains | orderBy: 'idx'">
                 <td class="col-md-1" rowspan="{{domain.ipaddr.length}}">{{domain.domain}}</td>
                 <td class="col-md-2" rowspan="{{domain.ipaddr.length}}">
-
-                    {{domain.whois}}
                     <div ng-show="domain.whois">
-                        {{domain.whois}}
+                        {{domain.whois.name}}
                     </div>
-                    <div ng-show="domain.whois == undefined">
-                        <button ng-click="whois(domain)">whois</button>
-                    </div>
-
                 </td>
                 <td class="col-md-1">{{domain.ipaddr[0].ipaddr}}</td>
                 <td class="col-md-2">{{domain.ipaddr[0].asn}} {{domain.ipaddr[0].asnowner}}</td>
