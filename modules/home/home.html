@@ -3,13 +3,18 @@
 
     <form ng-submit="getDomains()">
 
-    <div class="col-md-4">
-            <input type="text" class="form-control" id="b"
-                   name="inputDomain" ng-model="inputDomain"  placeholder="e.g. google.ch">
-    </div>
-    <div class="col-md-4">
-        <input class="btn btn-default" type="submit" id="submit" value="Submit" />
-    </div>
+        <div class="col-md-4">
+                <input type="text" class="form-control" id="b"
+                       name="inputDomain" ng-model="inputDomain"  placeholder="e.g. google.ch">
+        </div>
+        <div class="col-md-4">
+            <input class="btn btn-default" type="submit" id="submit" value="Submit" />
+        </div>
+
+        <div class="col-md-4">
+            <a class="btn pull-right" ng-class="{true: 'btn-primary', false: 'btn-default'}[!showUnregistered]"
+               ng-click="showUnregistered = !showUnregistered">{{!showUnregistered && 'Show' || 'Hide'}} Unregistered</a>
+        </div>
 
     </form>
 </div>
@@ -32,7 +37,7 @@
                 <td>IP Badactor</td>
             </th>
 
-            <tr ng-repeat-start="domain in domains | orderBy: 'idx'">
+            <tr ng-repeat-start="domain in domains | orderBy: 'idx'"  ng-show="showUnregistered ? true : domain.whois.name">
                 <td class="col-md-1" rowspan="{{domain.ipaddr.length}}">{{domain.domain}}</td>
                 <td class="col-md-2" rowspan="{{domain.ipaddr.length}}">
                     <div ng-show="domain.whois">
@@ -43,7 +48,7 @@
                 <td class="col-md-2">{{domain.ipaddr[0].asn}} {{domain.ipaddr[0].asnowner}}</td>
                 <td class="col-md-1">{{domain.ipaddr[0].badactor}}</td>
             </tr>
-            <tr ng-repeat-end ng-repeat='ip in domain.ipaddr' ng-hide="$first">
+            <tr ng-repeat-end ng-repeat='ip in domain.ipaddr' ng-hide="$first" >
                 <td>{{ip.ipaddr}}</td>
                 <td>{{ip.asn}} {{ip.asnowner}}</td>
                 <td>{{ip.badactor}}</td>

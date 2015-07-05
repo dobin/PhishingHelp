@@ -10,6 +10,8 @@ sudo pip install pyasn --pre
 sudo pip install python-whois
 sudo pip install pythonwhois
 sudo pip install pwhois
+pip install simplejson
+pip install pymongo
 
 
 
