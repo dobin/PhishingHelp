@@ -17,6 +17,15 @@ angular.module('myApp.Home', ['ngRoute'])
             $scope.loading = false;
             $scope.showUnregistered = true;
 
+            $scope.hoverIn = function(){
+                this.hoverEdit = true;
+            };
+
+            $scope.hoverOut = function(){
+                this.hoverEdit = false;
+            };
+
+
             $scope.updateTable = function() {
                 var n = 0;
 

@@ -87,7 +87,6 @@ def get_domains(dom):
     #return dumps({'domains': domains.values()})
 
 
-
 if __name__ == '__main__':
     app.run(debug=True)
 

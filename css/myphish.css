@@ -31,3 +31,8 @@ ul>li, a{cursor: pointer;}
 }
 
 .none {display: none;}
+
+.hover {
+    position: absolute;
+    z-index: 10;
+}

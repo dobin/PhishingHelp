@@ -13,6 +13,7 @@ sudo pip install pwhois
 pip install simplejson
 pip install pymongo
 
+pip install ipwhois
 
 
 Flask Server:
