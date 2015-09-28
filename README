@@ -1,32 +1,60 @@
+How to install:
+
+Source
+------
+
+# cd /var/www
+# git clone <>
 
 
-Libraries:
+Python
+------
 
-sudo pip install Flask
-sudo pip install pymongo
+apt-get install python-pip
 
-sudo pip install unirest
-sudo pip install pyasn --pre
-sudo pip install python-whois
-sudo pip install pythonwhois
-sudo pip install pwhois
-pip install simplejson
-pip install pymongo
+# pip install Flask
+# pip install pymongo
+# pip install unirest
+# pip install ipwhois
+# pip install simplejson
+# pip install python-whois
+# pip install pythonwhois
 
-pip install ipwhois
-
-
-Flask Server:
-
-Run on port 5000 on localhost:
-$ python service.py localhost
+not:
+#pip install pyasn --pre
+#pip install pwhois
 
 
-Apache Config:
+Apache 
+------
+
+# apt-get install apache2
+# a2enmod proxy_html
+
+Config:
 
 <VirtualHost ....>
 [...]
         ProxyPass /service http://127.0.0.1:5000
         ProxyPassReverse /service http://127.0.0.1:5000
         ProxyPreserveHost On
+
+
+Mongo
+-----
+
+# apt-get install mongodb
+
+
+Start Flask Server
+------------------
+
+Run on port 5000 on localhost:
+$ python service.py localhost
+
+
+Website
+-------
+
+go to localhost/<cloned>
 

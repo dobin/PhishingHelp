@@ -61,8 +61,8 @@ def resolveDomainsLong(domains, mongoDomains):
     key = domains.keys()
     d = 0
 
-    #while(d < len(key)):
-    while(d < 1):
+    while(d < len(key)):
+    #while(d < 1):
         dom = domains[ key[d] ]
         print "Testing: " + dom['domain']
 

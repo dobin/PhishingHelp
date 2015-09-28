@@ -127,29 +127,29 @@ def calcDomains(domain):
 
     id = 1
 
-#    for i in bitsquatting(domain):
-#	    domains[i] = {'type':'Bitsquatting', 'domain':i, 'ipaddr':'-', 'idx': id}
-#	    id += 1
-#
-#   for i in homoglyph(domain):
-#	    domains[i] = {'type':'Homoglyph', 'domain':i, 'ipaddr':'-', 'idx': id}
-#	    id += 1
-#
-#    for i in repetition(domain):
-#    	domains[i] = {'type':'Repetition', 'domain':i, 'ipaddr':'-', 'idx': id}
-#    	id += 1
-#
-#    for i in replacement(domain):
-#    	domains[i] = {'type':'Replacement', 'domain':i, 'ipaddr':'-', 'idx': id}
-#    	id += 1
-#
-#    for i in omission(domain):
-#    	domains[i] = {'type':'Omission', 'domain':i, 'ipaddr':'-', 'idx': id}
-#    	id += 1
-#
-#    for i in insertion(domain):
-#    	domains[i] = {'type':'Insertion', 'domain':i, 'ipaddr':'-', 'idx': id}
-#    	id += 1
+    for i in bitsquatting(domain):
+	    domains[i] = {'type':'Bitsquatting', 'domain':i, 'ipaddr':'-', 'idx': id}
+	    id += 1
+
+    for i in homoglyph(domain):
+	    domains[i] = {'type':'Homoglyph', 'domain':i, 'ipaddr':'-', 'idx': id}
+	    id += 1
+
+    for i in repetition(domain):
+    	domains[i] = {'type':'Repetition', 'domain':i, 'ipaddr':'-', 'idx': id}
+    	id += 1
+
+    for i in replacement(domain):
+    	domains[i] = {'type':'Replacement', 'domain':i, 'ipaddr':'-', 'idx': id}
+    	id += 1
+
+    for i in omission(domain):
+    	domains[i] = {'type':'Omission', 'domain':i, 'ipaddr':'-', 'idx': id}
+    	id += 1
+
+    for i in insertion(domain):
+    	domains[i] = {'type':'Insertion', 'domain':i, 'ipaddr':'-', 'idx': id}
+    	id += 1
 
 
 
