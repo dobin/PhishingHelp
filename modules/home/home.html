@@ -30,28 +30,31 @@
         <div ng-show="loading" class="loading">Loading</div>
 
         <table class="table table-condensed maintable" data-show-header="false">
-            <th>
+            <tr>
                 <td>Whois</td>
                 <td>IP</td>
                 <td>IP AS</td>
                 <td>IP Badactor</td>
-            </th>
+            </tr>
 
             <tr ng-repeat-start="domain in domains | orderBy: 'idx'"  ng-show="showUnregistered ? true : domain.whois.name">
-                <td class="col-md-1" rowspan="{{domain.ipaddr.length}}">
+                <!-- Span rows if there are multiple IP addresses. Set rowspan=1 if length=0 -->
+                <td class="col-md-1" rowspan="{{domain.ipaddr.length ? domain.ipaddr.length : 1}}">
                     {{domain.domain}}
                     <p ng-mouseover="hoverIn()" ng-mouseleave="hoverOut()">
                         [Preview]
                         <span ng-show="hoverEdit">
-                            <img class="hover" src="{{'screenshots/' + domain._id}}" width="800" height="600">
+                            <img class="hover" src="{{ 'screenshots/' + domain._id }}" width="800" height="600">
                         </span>
                     </p>
                 </td>
-                <td class="col-md-2" rowspan="{{domain.ipaddr.length}}">
+                <!-- Span rows if there are multiple IP addresses. Set rowspan=1 if length=0 -->
+                <td class="col-md-2" rowspan="{{domain.ipaddr.length ? domain.ipaddr.length : 1}}">
                     <div ng-show="domain.whois">
                         {{domain.whois.name}}
                     </div>
                 </td>
+
                 <td class="col-md-1">{{domain.ipaddr[0].ipaddr}}</td>
                 <td class="col-md-2">
                     {{domain.ipaddr[0].asn}} {{domain.ipaddr[0].asnowner}} <br>
