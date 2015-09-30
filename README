@@ -4,37 +4,28 @@ Source
 ------
 
 # cd /var/www
-# git clone <>
+# git clone https://github.com/dobin/PhishingHelp.git
 
 
 Python
 ------
 
 apt-get install python-pip
-
-# pip install Flask
-# pip install pymongo
-# pip install unirest
-# pip install ipwhois
-# pip install simplejson
-# pip install python-whois
-# pip install pythonwhois
-
-not:
-#pip install pyasn --pre
-#pip install pwhois
+pip install Flask pymongo unirest ipwhois simplejson python-whois pythonwhois
 
 
 Apache 
 ------
 
 # apt-get install apache2
+# apt-get install libapache2-mod-proxy-html
 # a2enmod proxy_html
 
 Config:
 
 <VirtualHost ....>
 [...]
+        ProxyRequests Off # disable open proxy
         ProxyPass /service http://127.0.0.1:5000
         ProxyPassReverse /service http://127.0.0.1:5000
         ProxyPreserveHost On
