@@ -20,11 +20,9 @@ def resolveDomain(domain):
 
     ## slow stuff
 
-    # get as for each ip
+    # get AS for each ip
     # we do all at once for performance reasons
     getAsForDomains(domain)
-    #getWhoisForDomains(domains)
-
 
 
 def getIpForDomains(domain):
@@ -35,9 +33,9 @@ def getIpForDomains(domain):
 
         for ip in ips[2]:
             domain['ipaddr'].append({'ipaddr': ip})
+            print "  Domain IP: " + ip
     except:
         domain['ipaddr'] = []
-
 
 
 def getAsForDomains(domain):
@@ -62,6 +60,7 @@ def getAsForDomains(domain):
                 ip['asn'] = r.asn
                 ip['asnowner'] = r.owner
 
+                print "  AS: " + r.asn + " / " + r.owner
 
 
 def getBadactorsForDomains(domain):
@@ -73,6 +72,4 @@ def getBadactorsForDomains(domain):
             ip['badactor'] = "Yes"
         else:
             ip['badactor'] = "No"
-
-
 

@@ -26,17 +26,6 @@ mongoDB = mongoClient.phishing_help
 
 app = Flask(__name__)
 
-class MongoDocumentEncoder(simplejson.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, datetime):
-            return o.isoformat()
-        elif isinstance(o, ObjectId):
-            return str(o)
-        return simplejson.JSONEncoder(self, o)
-
-
-def mongodoc_jsonify(*args, **kwargs):
-    return Response(simplejson.dumps(dict(*args, **kwargs), cls=MongoDocumentEncoder), mimetype='application/json')
 
 @app.route('/myphish/api/v1.0/domainInfo/<dom>', methods=['GET'])
 @support_jsonp
@@ -50,8 +39,7 @@ def get_domain(dom):
 @app.route('/myphish/api/v1.0/domain/<dom>', methods=['GET'])
 @support_jsonp
 def get_domains(dom):
-    print "Start"
-    ui = 0
+    print "Start with domain: " + domain
 
     # get all mutations of initial domain
     # id 0 is original
@@ -83,8 +71,20 @@ def get_domains(dom):
 
     # convert domains to array and return to client
     return mongodoc_jsonify({'domains': domains.values()})
-    #return JSONEncoder().encode({'domains': domains.values()})
-    #return dumps({'domains': domains.values()})
+
+
+
+class MongoDocumentEncoder(simplejson.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+        elif isinstance(o, ObjectId):
+            return str(o)
+        return simplejson.JSONEncoder(self, o)
+
+
+def mongodoc_jsonify(*args, **kwargs):
+    return Response(simplejson.dumps(dict(*args, **kwargs), cls=MongoDocumentEncoder), mimetype='application/json')
 
 
 if __name__ == '__main__':
