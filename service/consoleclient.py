@@ -7,28 +7,32 @@ import dnstwist
 from domaintools import resolveDomain
 from domaintoolsasync import resolveDomainsLongImpl
 
+def printHelp():
+    print "--help this"
+    print "--domain/-d  <domain>"
+
 def main():
     # parse command line options
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
+        opts, args = getopt.getopt(sys.argv[1:], "d:h", ["help", "domain"])
     except getopt.error, msg:
-        print msg
-        print "for help use --help"
-        sys.exit(2)
+        printHelp()
+        sys.exit(0)
+
+    if len(sys.argv) == 1:
+        printHelp()
+        sys.exit(0)
 
     # process options
     for o, a in opts:
         if o in ("-h", "--help"):
-            print __doc__
+            printHelp()
             sys.exit(0)
+        if o in ("-d", "--domain"):
+            dom = a
 
-    # process arguments
-    for arg in args:
-        process(arg) # process() is defined elsewhere
-
-
-    dom = "dobin.ch"
     print "Domain: " + dom
+
     domains = dnstwist.calcDomains(dom)
 
     print json.dumps(domains, indent=4)
