@@ -44,6 +44,7 @@ Start Flask Server
 ------------------
 
 Run on port 5000 on localhost:
+
 $ python service.py localhost
 
 
@@ -51,12 +52,12 @@ Website
 -------
 
 go to:
-http://localhost/PhishingHelp.git/
+http://localhost/PhishingHelp/
 
 
 
 Console client:
 ---------------
 
-$ cd /var/www/PhishingHelp.git/service
+$ cd /var/www/PhishingHelp/service
 $ python consoleclient.py -d <domain>

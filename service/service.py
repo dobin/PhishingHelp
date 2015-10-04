@@ -39,7 +39,7 @@ def get_domain(dom):
 @app.route('/myphish/api/v1.0/domain/<dom>', methods=['GET'])
 @support_jsonp
 def get_domains(dom):
-    print "Start with domain: " + domain
+    print "Start with domain: " + dom
 
     # get all mutations of initial domain
     # id 0 is original
