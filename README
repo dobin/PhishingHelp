@@ -17,18 +17,21 @@ pip install Flask pymongo unirest ipwhois simplejson python-whois pythonwhois
 Apache 
 ------
 
+Install mod_proxy:
+
 # apt-get install apache2
 # apt-get install libapache2-mod-proxy-html
 # a2enmod proxy_html
 
-Config:
+
+Configure Apache to forward requests to /service to localhost:5000
 
 <VirtualHost ....>
 [...]
-        ProxyRequests Off # disable open proxy
-        ProxyPass /service http://127.0.0.1:5000
-        ProxyPassReverse /service http://127.0.0.1:5000
-        ProxyPreserveHost On
+    ProxyRequests Off # disable open proxy
+    ProxyPass /service http://127.0.0.1:5000
+    ProxyPassReverse /service http://127.0.0.1:5000
+    ProxyPreserveHost On
 
 
 Mongo
@@ -47,5 +50,13 @@ $ python service.py localhost
 Website
 -------
 
-go to localhost/<cloned>
+go to:
+http://localhost/PhishingHelp.git/
 
+
+
+Console client:
+---------------
+
+$ cd /var/www/PhishingHelp.git/service
+$ python consoleclient.py -d <domain>
